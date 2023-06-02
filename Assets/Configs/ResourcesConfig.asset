@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804fbc0ca08340b9922fd470d501a475, type: 3}
+  m_Name: ResourcesConfig
+  m_EditorClassIdentifier: 
+  WoodMaxHP: 10
+  StoneMaxHP: 25
+  IronMaxHP: 75
+  LeatherMaxHP: 185
+  SilverMaxHP: 415
+  GoldMaxHP: 1100
+  AlchemicalIngredientMaxHP: 700
+  MagicCrystalMaxHP: 2800
+  TitanMaxHP: 6000
+  LunocitMaxHP: 15000

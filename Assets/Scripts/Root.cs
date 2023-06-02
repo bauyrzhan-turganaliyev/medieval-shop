@@ -6,12 +6,12 @@ public class Root : MonoBehaviour
 {
     [SerializeField] private ModeSwitcherService _modeSwitcherService;
     [SerializeField] private PlayerController _playerController;
-    private MessageBus _messageBus;
+    [SerializeField] private UIService _uiService;
 
     private void Start()
     {
-        _messageBus = new MessageBus();
-        _modeSwitcherService.Init(_messageBus);
-        _playerController.Init(_messageBus);
+        _modeSwitcherService.Init();
+        _playerController.Init();
+        _uiService.Init();
     }
 }

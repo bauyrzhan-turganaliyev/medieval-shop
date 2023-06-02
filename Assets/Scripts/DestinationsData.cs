@@ -1,6 +1,4 @@
-﻿
-using DefaultNamespace;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DestinationsData : MonoBehaviour
 {
@@ -9,17 +7,17 @@ public class DestinationsData : MonoBehaviour
     [SerializeField] private Transform _polish;
     [SerializeField] private Transform _make;
 
-    public Vector3 GetPosition(EDestionation destionation)
+    public Vector3 GetPosition(EMode mode)
     {
-        switch (destionation)
+        switch (mode)
         {
-            case EDestionation.Make:
+            case EMode.Make:
                 return _make.position;
-            case EDestionation.Trade:
+            case EMode.Trade:
                 return _trade.position;
-            case EDestionation.Production:
+            case EMode.Production:
                 return _production.position;
-            case EDestionation.Polish:
+            case EMode.Polish:
                 return _polish.position;
         }
 

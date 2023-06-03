@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 804fbc0ca08340b9922fd470d501a475, type: 3}
-  m_Name: ResourcesConfig
+  m_Name: RawResourcesConfig
   m_EditorClassIdentifier: 
   WoodMaxHP: 10
   StoneMaxHP: 25

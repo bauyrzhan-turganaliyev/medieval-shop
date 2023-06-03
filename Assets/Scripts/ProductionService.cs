@@ -5,7 +5,7 @@ using Zenject;
 
 public class ProductionService : MonoBehaviour
 {
-    [SerializeField] private ResourcesConfig _resourcesConfig;
+    [SerializeField] private RawResourcesConfig _resourcesConfig;
     [SerializeField] private ProductionView _productionView;
 
     private EResource _currentSelectedResource;
@@ -31,7 +31,7 @@ public class ProductionService : MonoBehaviour
         _productionView.Init();
         _productionView.OnProductionClicked += ProductionClicked;
 
-        _currentSelectedResource = EResource.Wood;
+        _currentSelectedResource = EResource.RawWood;
         
         SetMaxHPOfResource();
         _hpOfResource = _maxHPofResource;
@@ -44,34 +44,34 @@ public class ProductionService : MonoBehaviour
     {
         switch (_currentSelectedResource)
         {
-            case EResource.Wood:
+            case EResource.RawWood:
                 _maxHPofResource = _resourcesConfig.WoodMaxHP;
                 break;
-            case EResource.Stone:
+            case EResource.RawStone:
                 _maxHPofResource = _resourcesConfig.StoneMaxHP;
                 break;
-            case EResource.Iron:
+            case EResource.RawIron:
                 _maxHPofResource = _resourcesConfig.IronMaxHP;
                 break;
-            case EResource.Leather:
+            case EResource.RawLeather:
                 _maxHPofResource = _resourcesConfig.LeatherMaxHP;
                 break;
-            case EResource.Silver:
+            case EResource.RawSilver:
                 _maxHPofResource = _resourcesConfig.SilverMaxHP;
                 break;
-            case EResource.Gold:
+            case EResource.RawGold:
                 _maxHPofResource = _resourcesConfig.GoldMaxHP;
                 break;
-            case EResource.AlchemicalIngredient:
+            case EResource.RawAlchemicalIngredient:
                 _maxHPofResource = _resourcesConfig.AlchemicalIngredientMaxHP;
                 break;
-            case EResource.MagicCrystal:
+            case EResource.RawMagicCrystal:
                 _maxHPofResource = _resourcesConfig.MagicCrystalMaxHP;
                 break;
-            case EResource.Titan:
+            case EResource.RawTitan:
                 _maxHPofResource = _resourcesConfig.TitanMaxHP;
                 break;
-            case EResource.Lunocit:
+            case EResource.RawLunocit:
                 _maxHPofResource = _resourcesConfig.LunocitMaxHP;
                 break;
         }
@@ -81,7 +81,7 @@ public class ProductionService : MonoBehaviour
     {
         switch (_currentSelectedResource)
         {
-            case EResource.Wood:
+            case EResource.RawWood:
                 var resourceCount = _productionSkillData.Strength / _hpOfResource;
 
                 if (_productionSkillData.Strength == _hpOfResource)
@@ -91,28 +91,28 @@ public class ProductionService : MonoBehaviour
 
                 if (resourceCount > 0)
                 {
-                    _resourcesData.Woods += Mathf.FloorToInt(resourceCount);
+                    _resourcesData.RawWoods += Mathf.FloorToInt(resourceCount);
                     _messageBus.OnResourceCountChanged?.Invoke();
                 }
 
                 break;
-            case EResource.Stone:
+            case EResource.RawStone:
                 break;
-            case EResource.Iron:
+            case EResource.RawIron:
                 break;
-            case EResource.Leather:
+            case EResource.RawLeather:
                 break;
-            case EResource.Silver:
+            case EResource.RawSilver:
                 break;
-            case EResource.Gold:
+            case EResource.RawGold:
                 break;
-            case EResource.AlchemicalIngredient:
+            case EResource.RawAlchemicalIngredient:
                 break;
-            case EResource.MagicCrystal:
+            case EResource.RawMagicCrystal:
                 break;
-            case EResource.Titan:
+            case EResource.RawTitan:
                 break;
-            case EResource.Lunocit:
+            case EResource.RawLunocit:
                 break;
         }
 

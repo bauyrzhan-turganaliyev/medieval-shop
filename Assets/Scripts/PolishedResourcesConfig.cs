@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "ResourcesConfig", menuName = "ScriptableObjects/ResourcesConfig", order = 1)]
-public class ResourcesConfig : ScriptableObject
+[CreateAssetMenu(fileName = "PolishedResourcesConfig", menuName = "ScriptableObjects/PolishedResourcesConfig", order = 1)]
+public class PolishedResourcesConfig : ScriptableObject
 {
     public int WoodMaxHP;
     public int StoneMaxHP;

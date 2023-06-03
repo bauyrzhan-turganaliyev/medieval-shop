@@ -26,35 +26,35 @@ public class ProductionView : MonoBehaviour
     {
         switch (resource)
         {
-            case EResource.Wood:
-                _resourceName.text = "Wood";
+            case EResource.RawWood:
+                _resourceName.text = "Raw Wood";
                 break;
-            case EResource.Stone:
-                _resourceName.text = "Stone";
+            case EResource.RawStone:
+                _resourceName.text = "Raw Stone";
                 break;
-            case EResource.Iron:
-                _resourceName.text = "Iron";
+            case EResource.RawIron:
+                _resourceName.text = "Raw Iron";
                 break;
-            case EResource.Leather:
-                _resourceName.text = "Leather";
+            case EResource.RawLeather:
+                _resourceName.text = "Raw Leather";
                 break;
-            case EResource.Silver:
-                _resourceName.text = "Silver";
+            case EResource.RawSilver:
+                _resourceName.text = "Raw Silver";
                 break;
-            case EResource.Gold:
-                _resourceName.text = "Gold";
+            case EResource.RawGold:
+                _resourceName.text = "Raw Gold";
                 break;
-            case EResource.AlchemicalIngredient:
-                _resourceName.text = "Alchemy Ingredient";
+            case EResource.RawAlchemicalIngredient:
+                _resourceName.text = "Raw Alchemy Ingredient";
                 break;
-            case EResource.MagicCrystal:
-                _resourceName.text = "Magic Crystal";
+            case EResource.RawMagicCrystal:
+                _resourceName.text = "Raw Magic Crystal";
                 break;
-            case EResource.Titan:
-                _resourceName.text = "Titan";
+            case EResource.RawTitan:
+                _resourceName.text = "Raw Titan";
                 break;
-            case EResource.Lunocit:
-                _resourceName.text = "Lunocit";
+            case EResource.RawLunocit:
+                _resourceName.text = "Raw Lunocit";
                 break;
         }
     }

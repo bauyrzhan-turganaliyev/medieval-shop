@@ -4,6 +4,8 @@ using Zenject;
 
 public class UIService : MonoBehaviour
 {
+    [SerializeField] private InventoryView _inventoryView;
+    
     [SerializeField] private ProcessView _tradeView;
     [SerializeField] private ProcessView _productionView;
     [SerializeField] private ProcessView _polishView;
@@ -19,12 +21,15 @@ public class UIService : MonoBehaviour
     {
         _messageBus = messageBus;
     }
-    public void Init()
+    public void Init(ResourcesData resourcesData)
     {
         _currentMode = EMode.Trade;
         _messageBus.OnModeChanged += ChangeView;
         _messageBus.OnModeChanged?.Invoke(_currentMode);
+        
+        _inventoryView.Init(resourcesData);
     }
+    
 
     private void OnEnable()
     {

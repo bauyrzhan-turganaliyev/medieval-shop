@@ -12,10 +12,16 @@ public class ProductionService : MonoBehaviour
     
     private ResourcesData _resourcesData;
     private ProductionSkillData _productionSkillData;
-    
+    private MessageBus _messageBus;
+
     private float _hpOfResource;
     private int _maxHPofResource;
-    
+
+    [Inject]
+    public void Construct(MessageBus messageBus)
+    {
+        _messageBus = messageBus;
+    }
 
     public void Init(ResourcesData resourcesData, ProductionSkillData productionSkillData)
     {
@@ -82,8 +88,13 @@ public class ProductionService : MonoBehaviour
                     _hpOfResource = _maxHPofResource;
                 else 
                     _hpOfResource -= _productionSkillData.Strength % _hpOfResource;
-                
-                _resourcesData.Woods += Mathf.FloorToInt(resourceCount);
+
+                if (resourceCount > 0)
+                {
+                    _resourcesData.Woods += Mathf.FloorToInt(resourceCount);
+                    _messageBus.OnResourceCountChanged?.Invoke();
+                }
+
                 break;
             case EResource.Stone:
                 break;

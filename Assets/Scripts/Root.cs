@@ -16,7 +16,7 @@ public class Root : MonoBehaviour
         
         _modeSwitcherService.Init();
         _playerController.Init();
-        _uiService.Init();
+        _uiService.Init(_playerProgress.ResourcesData);
         _processService.Init(_playerProgress);
     }
 }

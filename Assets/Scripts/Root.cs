@@ -12,6 +12,9 @@ public class Root : MonoBehaviour
 
     private void Start()
     {
+
+        Application.targetFrameRate = 60;
+        
         _playerProgress = new PlayerProgress();
         
         _modeSwitcherService.Init();

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using ModestTree.Util;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class PolishService : MonoBehaviour
@@ -9,7 +10,7 @@ public class PolishService : MonoBehaviour
     [SerializeField] private PolishView _polishView;
 
     private EResource _currentSelectedResource;
-    
+
     private ResourcesData _resourcesData;
     private PolishSkillData _polishSkillData;
     private MessageBus _messageBus;
@@ -28,150 +29,322 @@ public class PolishService : MonoBehaviour
         _resourcesData = resourcesData;
         _polishSkillData = polishSkillData;
 
+        _polishView.OnPolishClicked += OnButtonClick;
+        _messageBus.OnResourceCountChanged += ResourcesCountChanged;
+        _messageBus.OnModeChanged += ModeChanged;
         _polishView.Init();
-        _polishView.OnPolishClicked += PolishClicked;
 
         _currentSelectedResource = EResource.PolishedWood;
-
-        _messageBus.OnModeChanged += ModeChanged;
-        
-        SetMaxHPOfResource();
-        _hpOfResource = _maxHPofResource;
-        
-        _polishView.SetHP(_hpOfResource, _maxHPofResource);
-        _polishView.SetupResourceName(_currentSelectedResource);
     }
 
-    private void ModeChanged(EMode mode)
+    private void ModeChanged(EMode obj)
     {
-        if (mode == EMode.Polish)
+        if (obj == EMode.Polish)
         {
+            ResourcesCountChanged();
+        }
+    }
+
+    private void ResourcesCountChanged()
+    {
+        switch (_currentSelectedResource)
+        {
+            case EResource.PolishedWood:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawWoods > 0);
+                break;
+            case EResource.PolishedStone:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawStones > 0);
+                break;
+            case EResource.PolishedIron:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawIrons > 0);
+                break;
+            case EResource.PolishedLeather:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawLeather > 0);
+                break;
+            case EResource.PolishedSilver:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawSilver > 0);
+                break;
+            case EResource.PolishedGold:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawGold > 0);
+                break;
+            case EResource.PolishedAlchemicalIngredient:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawAlchemicalIngredients > 0);
+                break;
+            case EResource.PolishedMagicCrystal:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawMagicCrystals > 0);
+                break;
+            case EResource.PolishedTitan:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawTitans > 0);
+                break;
+            case EResource.PolishedLunocit:
+                _polishView.Switch(_currentSelectedResource, _resourcesData.RawLunocits > 0);
+                break;
+        }
+    }
+
+    private void OnButtonClick(PolishAccuracy obj)
+    {
+        if (obj == PolishAccuracy.Green)
+        {
+            var max = 0;
             switch (_currentSelectedResource)
             {
                 case EResource.PolishedWood:
-                    if (_resourcesData.RawWoods <= 0) _polishView.Switch(EResource.PolishedWood, false);
-                    else _polishView.Switch(EResource.PolishedWood, true);
-                        break;
+                    max = _resourcesData.RawWoods;
+                    break;
                 case EResource.PolishedStone:
-                    if (_resourcesData.RawStones <= 0) _polishView.Switch(EResource.PolishedStone, false);
-                    else _polishView.Switch(EResource.PolishedStone, true);
+                    max = _resourcesData.RawStones;
                     break;
                 case EResource.PolishedIron:
-                    if (_resourcesData.RawIrons <= 0) _polishView.Switch(EResource.PolishedIron, false);
-                    else _polishView.Switch(EResource.PolishedIron, true);
+                    max = _resourcesData.RawIrons;
                     break;
                 case EResource.PolishedLeather:
-                    if (_resourcesData.RawLeather <= 0) _polishView.Switch(EResource.PolishedLeather, false);
-                    else _polishView.Switch(EResource.PolishedLeather, true);
+                    max = _resourcesData.RawLeather;
                     break;
                 case EResource.PolishedSilver:
-                    if (_resourcesData.RawSilver <= 0) _polishView.Switch(EResource.PolishedSilver, false);
-                    else _polishView.Switch(EResource.PolishedSilver, true);
+                    max = _resourcesData.RawSilver;
                     break;
                 case EResource.PolishedGold:
-                    if (_resourcesData.RawGold <= 0) _polishView.Switch(EResource.PolishedGold, false);
-                    else _polishView.Switch(EResource.PolishedGold, true);
+                    max = _resourcesData.RawGold;
                     break;
                 case EResource.PolishedAlchemicalIngredient:
-                    if (_resourcesData.RawAlchemicalIngredients <= 0) _polishView.Switch(EResource.PolishedAlchemicalIngredient, false);
-                    else _polishView.Switch(EResource.PolishedAlchemicalIngredient, true);
+                    max = _resourcesData.RawAlchemicalIngredients;
                     break;
                 case EResource.PolishedMagicCrystal:
-                    if (_resourcesData.RawMagicCrystals <= 0) _polishView.Switch(EResource.PolishedMagicCrystal, false);
-                    else _polishView.Switch(EResource.PolishedMagicCrystal, true);
+                    max = _resourcesData.RawMagicCrystals;
                     break;
                 case EResource.PolishedTitan:
-                    if (_resourcesData.RawTitans <= 0) _polishView.Switch(EResource.PolishedTitan, false);
-                    else _polishView.Switch(EResource.PolishedTitan, true);
+                    max = _resourcesData.RawTitans;
                     break;
                 case EResource.PolishedLunocit:
-                    if (_resourcesData.RawLunocits <= 0) _polishView.Switch(EResource.PolishedLunocit, false);
-                    else _polishView.Switch(EResource.PolishedLunocit, true);
+                    max = _resourcesData.RawLunocits;
                     break;
             }
-        }
-    }
 
-    private void SetMaxHPOfResource()
-    {
-        switch (_currentSelectedResource)
-        {
-            case EResource.PolishedWood:
-                _maxHPofResource = _resourcesConfig.WoodMaxHP;
-                break;
-            case EResource.PolishedStone:
-                _maxHPofResource = _resourcesConfig.StoneMaxHP;
-                break;
-            case EResource.PolishedIron:
-                _maxHPofResource = _resourcesConfig.IronMaxHP;
-                break;
-            case EResource.PolishedLeather:
-                _maxHPofResource = _resourcesConfig.LeatherMaxHP;
-                break;
-            case EResource.PolishedSilver:
-                _maxHPofResource = _resourcesConfig.SilverMaxHP;
-                break;
-            case EResource.PolishedGold:
-                _maxHPofResource = _resourcesConfig.GoldMaxHP;
-                break;
-            case EResource.PolishedAlchemicalIngredient:
-                _maxHPofResource = _resourcesConfig.AlchemicalIngredientMaxHP;
-                break;
-            case EResource.PolishedMagicCrystal:
-                _maxHPofResource = _resourcesConfig.MagicCrystalMaxHP;
-                break;
-            case EResource.PolishedTitan:
-                _maxHPofResource = _resourcesConfig.TitanMaxHP;
-                break;
-            case EResource.PolishedLunocit:
-                _maxHPofResource = _resourcesConfig.LunocitMaxHP;
-                break;
-        }
-    }
+            bool isOut = max <= _polishSkillData.Strength;
 
-    private void PolishClicked()
-    {
-        switch (_currentSelectedResource)
-        {
-            case EResource.PolishedWood:
-                var resourceCount = _polishSkillData.Strength / _hpOfResource;
-
-                if (_polishSkillData.Strength == _hpOfResource)
-                    _hpOfResource = _maxHPofResource;
-                else 
-                    _hpOfResource -= _polishSkillData.Strength % _hpOfResource;
-
-                if (resourceCount > 0)
+            if (isOut)
+            {
+                switch (_currentSelectedResource)
                 {
-                    _resourcesData.PolishedWoods += Mathf.FloorToInt(resourceCount);
-                    _resourcesData.RawWoods -= Mathf.FloorToInt(resourceCount);
-                    
-                    if (_resourcesData.RawWoods <= 0) _polishView.Switch(EResource.PolishedWood, false);
-                    
-                    _messageBus.OnResourceCountChanged?.Invoke();
+                    case EResource.PolishedWood:
+                        _resourcesData.RawWoods = 0;
+                        _resourcesData.PolishedWoods += max;
+                        break;
+                    case EResource.PolishedStone:
+                        _resourcesData.RawStones = 0;
+                        _resourcesData.PolishedStones += max;
+                        break;
+                    case EResource.PolishedIron:
+                        _resourcesData.RawIrons = 0;
+                        _resourcesData.PolishedIrons += max;
+                        break;
+                    case EResource.PolishedLeather:
+                        _resourcesData.RawLeather = 0;
+                        _resourcesData.PolishedLeather += max;
+                        break;
+                    case EResource.PolishedSilver:
+                        _resourcesData.RawSilver = 0;
+                        _resourcesData.PolishedSilver += max;
+                        break;
+                    case EResource.PolishedGold:
+                        _resourcesData.RawGold = 0;
+                        _resourcesData.PolishedGold += max;
+                        break;
+                    case EResource.PolishedAlchemicalIngredient:
+                        _resourcesData.RawAlchemicalIngredients = 0;
+                        _resourcesData.PolishedAlchemicalIngredients += max;
+                        break;
+                    case EResource.PolishedMagicCrystal:
+                        _resourcesData.RawMagicCrystals = 0;
+                        _resourcesData.PolishedMagicCrystals += max;
+                        break;
+                    case EResource.PolishedTitan:
+                        _resourcesData.RawTitans = 0;
+                        _resourcesData.PolishedTitans += max;
+                        break;
+                    case EResource.PolishedLunocit:
+                        _resourcesData.RawLunocits = 0;
+                        _resourcesData.PolishedLunocits += max;
+                        break;
                 }
+                
+                _messageBus.OnResourceCountChanged?.Invoke();
+            }
+            else
+            {
+                 switch (_currentSelectedResource)
+                {
+                    case EResource.PolishedWood:
+                        _resourcesData.RawWoods -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedWoods += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedStone:
+                        _resourcesData.RawStones -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedStones += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedIron:
+                        _resourcesData.RawIrons -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedIrons += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedLeather:
+                        _resourcesData.RawLeather -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedLeather += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedSilver:
+                        _resourcesData.RawSilver -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedSilver += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedGold:
+                        _resourcesData.RawGold -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedGold += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedAlchemicalIngredient:
+                        _resourcesData.RawAlchemicalIngredients -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedAlchemicalIngredients += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedMagicCrystal:
+                        _resourcesData.RawMagicCrystals -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedMagicCrystals += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedTitan:
+                        _resourcesData.RawTitans -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedTitans += (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedLunocit:
+                        _resourcesData.RawLunocits -= (int)_polishSkillData.Strength;
+                        _resourcesData.PolishedLunocits += (int)_polishSkillData.Strength;
+                        break;
+                }
+                 
+                 _messageBus.OnResourceCountChanged?.Invoke();
+            }
+            
+        } 
+        else if (obj == PolishAccuracy.Red)
+        {
+            var max = 0;
+            switch (_currentSelectedResource)
+            {
+                case EResource.PolishedWood:
+                    max = _resourcesData.RawWoods;
+                    break;
+                case EResource.PolishedStone:
+                    max = _resourcesData.RawStones;
+                    break;
+                case EResource.PolishedIron:
+                    max = _resourcesData.RawIrons;
+                    break;
+                case EResource.PolishedLeather:
+                    max = _resourcesData.RawLeather;
+                    break;
+                case EResource.PolishedSilver:
+                    max = _resourcesData.RawSilver;
+                    break;
+                case EResource.PolishedGold:
+                    max = _resourcesData.RawGold;
+                    break;
+                case EResource.PolishedAlchemicalIngredient:
+                    max = _resourcesData.RawAlchemicalIngredients;
+                    break;
+                case EResource.PolishedMagicCrystal:
+                    max = _resourcesData.RawMagicCrystals;
+                    break;
+                case EResource.PolishedTitan:
+                    max = _resourcesData.RawTitans;
+                    break;
+                case EResource.PolishedLunocit:
+                    max = _resourcesData.RawLunocits;
+                    break;
+            }
 
-                break;
-            case EResource.PolishedStone:
-                break;
-            case EResource.PolishedIron:
-                break;
-            case EResource.PolishedLeather:
-                break;
-            case EResource.PolishedSilver:
-                break;
-            case EResource.PolishedGold:
-                break;
-            case EResource.PolishedAlchemicalIngredient:
-                break;
-            case EResource.PolishedMagicCrystal:
-                break;
-            case EResource.PolishedTitan:
-                break;
-            case EResource.PolishedLunocit:
-                break;
+            bool isOut = max <= _polishSkillData.Strength;
+
+            if (isOut)
+            {
+                switch (_currentSelectedResource)
+                {
+                    case EResource.PolishedWood:
+                        _resourcesData.RawWoods = 0;
+                        break;
+                    case EResource.PolishedStone:
+                        _resourcesData.RawStones = 0;
+                        break;
+                    case EResource.PolishedIron:
+                        _resourcesData.RawIrons = 0;
+                        break;
+                    case EResource.PolishedLeather:
+                        _resourcesData.RawLeather = 0;
+                        break;
+                    case EResource.PolishedSilver:
+                        _resourcesData.RawSilver = 0;
+                        break;
+                    case EResource.PolishedGold:
+                        _resourcesData.RawGold = 0;
+                        break;
+                    case EResource.PolishedAlchemicalIngredient:
+                        _resourcesData.RawAlchemicalIngredients = 0;
+                        break;
+                    case EResource.PolishedMagicCrystal:
+                        _resourcesData.RawMagicCrystals = 0;
+                        break;
+                    case EResource.PolishedTitan:
+                        _resourcesData.RawTitans = 0;
+                        break;
+                    case EResource.PolishedLunocit:
+                        _resourcesData.RawLunocits = 0;
+                        break;
+                }
+            }
+            else
+            {
+                 switch (_currentSelectedResource)
+                {
+                    case EResource.PolishedWood:
+                        _resourcesData.RawWoods -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedStone:
+                        _resourcesData.RawStones -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedIron:
+                        _resourcesData.RawIrons -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedLeather:
+                        _resourcesData.RawLeather -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedSilver:
+                        _resourcesData.RawSilver -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedGold:
+                        _resourcesData.RawGold -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedAlchemicalIngredient:
+                        _resourcesData.RawAlchemicalIngredients -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedMagicCrystal:
+                        _resourcesData.RawMagicCrystals -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedTitan:
+                        _resourcesData.RawTitans -= (int)_polishSkillData.Strength;
+                        break;
+                    case EResource.PolishedLunocit:
+                        _resourcesData.RawLunocits -= (int)_polishSkillData.Strength;
+                        break;
+                }
+            }
+            
+            
+            _messageBus.OnResourceCountChanged?.Invoke();
         }
+        
+        _polishView.UpdateView();
+    }
+    
 
-        _polishView.SetHP(_hpOfResource, _maxHPofResource);
+    public enum PolishAccuracy
+    {
+        Red,
+        Yellow,
+        Green
     }
 }

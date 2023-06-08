@@ -34,6 +34,7 @@ public class PolishView : MonoBehaviour
     private float _yellowZoneRightMaxX;
 
     private bool _isMovingRight = true;
+    private bool _isOn;
 
     public void Init()
     {
@@ -64,6 +65,8 @@ public class PolishView : MonoBehaviour
     }
     private void Update()
     {
+        if (!_isOn) return;
+        
         float cursorPosition = _cursorRectTransform.localPosition.x;
 
         if (_isMovingRight)
@@ -211,6 +214,7 @@ public class PolishView : MonoBehaviour
     
     public void Switch(EResource resource, bool flag)
     {
+        _isOn = flag;
         _progressBarRectTransform.gameObject.SetActive(flag);
         _cursorRectTransform.gameObject.SetActive(flag);
         _greenZoneRectTransform.gameObject.SetActive(flag);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,17 +17,19 @@ public class JapckpotWheel : MonoBehaviour
     [SerializeField] private Button _stopButton;
     [SerializeField] private List<Color> _colors;
     [SerializeField] private Color _pickColor;
+
+    public Action<ItemQuality> OnJackpotStopped;
     
     private Dictionary<int, QualityWheelData> _array;
     private List<WheelPart> _list;
     private bool _isStop; 
 
-    void Start()
+    public void Init()
     {
         _list = new List<WheelPart>();
         _stopButton.onClick.AddListener((() => _isStop = true));
-        _array = new Dictionary<int, QualityWheelData>();
-        _array.Add(1, new QualityWheelData()
+        _array = new Dictionary<int, QualityWheelData>
+        { { 1, new QualityWheelData()
         {
             ItemQualityData = new List<ItemQuality>()
             {
@@ -50,7 +53,7 @@ public class JapckpotWheel : MonoBehaviour
                 ItemQuality.Broken,
                 ItemQuality.Bad,
             }
-        });
+        } } };
         /*for (int i = 0; i < _partCount; i++)
         {
             var part = Instantiate(_wheelPart, _parent);
@@ -59,6 +62,11 @@ public class JapckpotWheel : MonoBehaviour
             part.fillAmount = 1f / _partCount * (i + 1);
             part.transform.SetAsFirstSibling();
         }*/
+
+    }
+
+    public void CreateWheel()
+    {
         for (int i = 0; i < _partCount; i++)
         {
             var part = Instantiate(_wheelPart, _parent);
@@ -84,12 +92,13 @@ public class JapckpotWheel : MonoBehaviour
                     color = _colors[5];
                     break;
             }
+
             part.color = color;
             part.fillAmount = 1f / _partCount * (i + 1);
             part.transform.SetAsFirstSibling();
             _list.Add(new WheelPart(part, _array[_level].ItemQualityData[i]));
         }
-
+        
         StartWheel();
     }
 
@@ -102,7 +111,6 @@ public class JapckpotWheel : MonoBehaviour
         
         while (!_isStop)
         {
-            
             await Task.Delay(32);
             last.Visual.color = color;
             index++;
@@ -110,14 +118,24 @@ public class JapckpotWheel : MonoBehaviour
             {
                 index = 0;
             }
-
             color = _list[index].Visual.color;
             _list[index].Visual.color = _pickColor;
             last = _list[index];
 
         }
-        
-        print(last.Quality);
+
+        Reset();
+        _isStop = false;
+        OnJackpotStopped?.Invoke(last.Quality);
+    }
+
+    private void Reset()
+    {
+        _list.Clear();
+        for (int i = 0; i < _parent.childCount; i++)
+        {
+            Destroy(_parent.GetChild(i).gameObject);
+        }
     }
 }
 

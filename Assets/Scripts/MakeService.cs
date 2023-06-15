@@ -6,6 +6,7 @@ using Zenject;
 public class MakeService : MonoBehaviour
 {
     [SerializeField] private MakeView _makeView;
+    [SerializeField] private JapckpotWheel _japckpotWheel;
     
     private MessageBus _messageBus;
 
@@ -19,7 +20,20 @@ public class MakeService : MonoBehaviour
     {
         _messageBus.OnModeChanged += ModeChanged;
         _makeView.Init();
+        _japckpotWheel.Init();
         _makeView.AllPartsPlaced += AllPartsPlaced;
+        _japckpotWheel.OnJackpotStopped += JackpotStopped;
+        _makeView.OnCreatedForm += FormCreated;
+    }
+
+    private void FormCreated()
+    {
+        _japckpotWheel.CreateWheel();
+    }
+
+    private void JackpotStopped(ItemQuality obj)
+    {
+        _makeView.ItemHasDone("Sword", obj);
     }
 
     private void AllPartsPlaced()

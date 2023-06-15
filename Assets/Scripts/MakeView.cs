@@ -2,30 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class MakeView : MonoBehaviour
 {
+    [SerializeField] private ItemsConfig _itemsConfig;
+    
+    [SerializeField] private ChoosePanelView _choosePanelView;
+    [SerializeField] private ChooseMaterialView _chooseMaterialView;
+    
     [SerializeField] private GameObject _partsPanel;
     [SerializeField] private GameObject _makePanel;
     [SerializeField] private GameObject _jackpotPanel;
-
-    [SerializeField] private JapckpotWheel _japckpotWheel;
+    [SerializeField] private GameObject _acceptPanel;
     
-    [SerializeField] private Item _sword;
+    [SerializeField] private List<MakeItem> _items;
     
     [SerializeField] private RectTransform _progressBar; 
     [SerializeField] private RectTransform _greenZone;
     [SerializeField] private MakeCursor _cursor;
     
+    [SerializeField] private Button _choosePanelButton;
+    [SerializeField] private Button _backChooseItemButton;
+    [SerializeField] private Button _backChooseMaterialButton;
     [SerializeField] private MakeButton _makeButton;
+
+    [SerializeField] private Button _resultButton;
+    [SerializeField] private TMP_Text _resultText;
     
     [SerializeField] private float _greenZoneSpeed;
     [SerializeField] private float _cursorSpeed;
 
     public Action AllPartsPlaced;
+    public Action OnCreatedForm;
 
     private float _progressBarWidth;
     private float _greenZoneWidth;
@@ -35,24 +47,86 @@ public class MakeView : MonoBehaviour
     private bool _isMovingRight;
     private bool _cursorRight;
     private bool _inGreenZone;
+    
+    private ItemClass _currentChosenItem;
+    private MakeItem _currentMakeItem;
 
     public void Init()
     {
+        _choosePanelView.Init();
+        _choosePanelView.OnItemChosen += ItemChosen;
+        _chooseMaterialView.OnNeedResources += ItemClicked;
+
         _progressBarWidth = _progressBar.rect.width;
         _greenZoneWidth = _greenZone.rect.width;
         _cursorWidth = _cursor.RectTransform.rect.width;
-        
-        _sword.OnAllPartsPlaced += () =>
+
+        foreach (var item in _items)
         {
-            _sword.ResetProgressBar();
-            AllPartsPlaced?.Invoke();
-        };
+            item.Init();
+            item.OnAllPartsPlaced += () =>
+            {
+                item.ResetProgressBar();
+                AllPartsPlaced?.Invoke();
+            };    
+        }
+        
+        
+        _backChooseMaterialButton.onClick.AddListener((() =>
+        {
+            SwitchMaterialPanel(false);
+            SwitchChoosePanel(true);
+        }));
+        _backChooseItemButton.onClick.AddListener(() => SwitchChoosePanel(false));
+        _choosePanelButton.onClick.AddListener((() => SwitchChoosePanel(true)));
 
         _makeButton.OnPressing += SetCursorMode;
         _cursor.OnGreenZoneOn += InGreenZone;
-    
-        _sword.Init();
-        _sword.Reset();
+        _resultButton.onClick.AddListener(Reset);
+    }
+
+    private void ItemClicked(List<NeedResources> needResources)
+    {
+        foreach (var item in _items)
+        {
+            if (item.ItemClass == _currentChosenItem)
+            {
+                _currentMakeItem = item;
+                break;
+            }
+        }
+        _currentMakeItem.Reset();
+        SwitchMaterialPanel(false);
+        _choosePanelButton.gameObject.SetActive(false);
+        _partsPanel.SetActive(true);
+        print($"Current item class {_currentChosenItem}, material {needResources[0].Resource}");
+    }
+
+    private void ItemChosen(ItemClass obj)
+    {
+        _currentChosenItem = obj;
+        
+        SwitchChoosePanel(false);
+        _chooseMaterialView.Clear();
+        foreach (var item in _itemsConfig.Items)
+        {
+            if (item.ItemClass == obj)
+            {
+                _chooseMaterialView.CreateMaterials(item);
+            }
+        }
+
+        SwitchMaterialPanel(true);
+    }
+
+    private void SwitchMaterialPanel(bool b)
+    {
+        _chooseMaterialView.gameObject.SetActive(b);
+    }
+
+    private void SwitchChoosePanel(bool b)
+    {
+        _choosePanelView.gameObject.SetActive(b);
     }
 
     private void InGreenZone(bool obj)
@@ -71,10 +145,11 @@ public class MakeView : MonoBehaviour
 
         if (_inGreenZone)
         {
-            _sword.ProgressBar.fillAmount += 0.1f * Time.deltaTime;
-            if (_sword.ProgressBar.fillAmount >= 1)
+            _currentMakeItem.ProgressBar.fillAmount += 0.1f * Time.deltaTime;
+            if (_currentMakeItem.ProgressBar.fillAmount >= 1)
             {
                 End();
+                _cursorRight = false;
             }
         }
         
@@ -135,14 +210,24 @@ public class MakeView : MonoBehaviour
 
     private void End()
     {
-        _jackpotPanel.gameObject.SetActive(true);
         Reset();
+
+        OnCreatedForm?.Invoke();
+        
+        _choosePanelView.gameObject.SetActive(false);
+        _choosePanelButton.gameObject.SetActive(false);
+        _jackpotPanel.gameObject.SetActive(true);
     }
 
     private void Reset()
     {
-        _partsPanel.gameObject.SetActive(true);
-        _makePanel.gameObject.SetActive(false);
+        _choosePanelView.gameObject.SetActive(false);
+        _partsPanel.SetActive(false);
+        _makePanel.SetActive(false);
+        _jackpotPanel.SetActive(false);
+        _acceptPanel.SetActive(false);
+        _choosePanelButton.gameObject.SetActive(true);
+        _currentMakeItem?.Reset();
     }
 
     public void Switch(bool b)
@@ -154,5 +239,12 @@ public class MakeView : MonoBehaviour
     public void MakeMode()
     {
         _makePanel.SetActive(true);
+    }
+
+    public void ItemHasDone(string item, ItemQuality itemQuality)
+    {
+        _jackpotPanel.SetActive(false);
+        _acceptPanel.SetActive(true);
+        _resultText.text = $"You made {item}\n" + $"Quality - {itemQuality}";
     }
 }

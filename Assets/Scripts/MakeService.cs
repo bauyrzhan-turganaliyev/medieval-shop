@@ -16,10 +16,10 @@ public class MakeService : MonoBehaviour
         _messageBus = messageBus;
     }
 
-    public void Init()
+    public void Init(PlayerProgress playerProgress)
     {
         _messageBus.OnModeChanged += ModeChanged;
-        _makeView.Init();
+        _makeView.Init(playerProgress);
         _japckpotWheel.Init();
         _makeView.AllPartsPlaced += AllPartsPlaced;
         _japckpotWheel.OnJackpotStopped += JackpotStopped;

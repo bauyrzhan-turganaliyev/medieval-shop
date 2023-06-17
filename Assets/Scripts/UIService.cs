@@ -1,16 +1,20 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class UIService : MonoBehaviour
 {
     [SerializeField] private RawResourcesInventoryView _rawResourcesInventoryView;
     [SerializeField] private PolishedResourcesInventoryView _polishedResourcesInventoryView;
+    [SerializeField] private InventoryView _inventoryView;
     
     [SerializeField] private ProcessView _tradeView;
     [SerializeField] private ProcessView _productionView;
     [SerializeField] private ProcessView _polishView;
     [SerializeField] private ProcessView _makeView;
+
+    [SerializeField] private Button _inventoryButton;
 
     private MessageBus _messageBus;
     
@@ -30,6 +34,8 @@ public class UIService : MonoBehaviour
         
         _rawResourcesInventoryView.Init(resourcesData);
         _polishedResourcesInventoryView.Init(resourcesData);
+        
+        _inventoryButton.onClick.AddListener((() => _inventoryView.gameObject.SetActive(true)));
     }
     
 

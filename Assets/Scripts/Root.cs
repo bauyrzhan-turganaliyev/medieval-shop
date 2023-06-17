@@ -8,6 +8,8 @@ public class Root : MonoBehaviour
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private UIService _uiService;
     [SerializeField] private ProcessService _processService;
+    [SerializeField] private InventoryView _inventoryView;
+    
     private PlayerProgress _playerProgress;
 
     private void Start()
@@ -21,5 +23,6 @@ public class Root : MonoBehaviour
         _playerController.Init();
         _uiService.Init(_playerProgress.ResourcesData);
         _processService.Init(_playerProgress);
+        _inventoryView.Init(_playerProgress.Inventory);
     }
 }

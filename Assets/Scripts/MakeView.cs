@@ -5,6 +5,7 @@ using System.Net;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 using Random = UnityEngine.Random;
 
 public class MakeView : MonoBehaviour
@@ -39,6 +40,9 @@ public class MakeView : MonoBehaviour
     public Action AllPartsPlaced;
     public Action OnCreatedForm;
 
+    private MessageBus _messageBus;
+    private PlayerProgress _playerProgress;
+
     private float _progressBarWidth;
     private float _greenZoneWidth;
     private float _cursorWidth;
@@ -47,12 +51,21 @@ public class MakeView : MonoBehaviour
     private bool _isMovingRight;
     private bool _cursorRight;
     private bool _inGreenZone;
-    
+
     private ItemClass _currentChosenItem;
     private MakeItem _currentMakeItem;
+    private List<NeedResources> _needResources;
 
-    public void Init()
+    [Inject]
+    public void Construct(MessageBus messageBus)
     {
+        _messageBus = messageBus;
+    }
+
+    public void Init(PlayerProgress playerProgress)
+    {
+        _playerProgress = playerProgress;
+
         _choosePanelView.Init();
         _choosePanelView.OnItemChosen += ItemChosen;
         _chooseMaterialView.OnNeedResources += ItemClicked;
@@ -70,13 +83,13 @@ public class MakeView : MonoBehaviour
                 AllPartsPlaced?.Invoke();
             };    
         }
-        
-        
+
         _backChooseMaterialButton.onClick.AddListener((() =>
         {
             SwitchMaterialPanel(false);
             SwitchChoosePanel(true);
         }));
+        
         _backChooseItemButton.onClick.AddListener(() => SwitchChoosePanel(false));
         _choosePanelButton.onClick.AddListener((() => SwitchChoosePanel(true)));
 
@@ -87,6 +100,61 @@ public class MakeView : MonoBehaviour
 
     private void ItemClicked(List<NeedResources> needResources)
     {
+        _needResources = needResources;
+        var isOk = true;
+        foreach (var resource in needResources)
+        {
+            switch (resource.Resource)
+            {
+                case EResource.PolishedWood:
+                    if (_playerProgress.ResourcesData.PolishedWoods < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedWoods -= resource.Count;
+                    break;
+                case EResource.PolishedStone:
+                    if (_playerProgress.ResourcesData.PolishedStones < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedStones -= resource.Count;
+                    break;
+                case EResource.PolishedIron:
+                    if (_playerProgress.ResourcesData.PolishedIrons < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedIrons -= resource.Count;
+                    break;
+                case EResource.PolishedLeather:
+                    if (_playerProgress.ResourcesData.PolishedLeather < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedLeather -= resource.Count;
+                    break;
+                case EResource.PolishedSilver:
+                    if (_playerProgress.ResourcesData.PolishedSilver < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedSilver -= resource.Count;
+                    break;
+                case EResource.PolishedGold:
+                    if (_playerProgress.ResourcesData.PolishedGold < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedGold -= resource.Count;
+                    break;
+                case EResource.PolishedAlchemicalIngredient:
+                    if (_playerProgress.ResourcesData.PolishedAlchemicalIngredients < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedAlchemicalIngredients -= resource.Count;
+                    break;
+                case EResource.PolishedMagicCrystal:
+                    if (_playerProgress.ResourcesData.PolishedMagicCrystals < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedMagicCrystals -= resource.Count;
+                    break;
+                case EResource.PolishedTitan:
+                    if (_playerProgress.ResourcesData.PolishedTitans < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedTitans -= resource.Count;
+                    break;
+                case EResource.PolishedLunocit:
+                    if (_playerProgress.ResourcesData.PolishedLunocits < resource.Count) isOk = false;
+                    else _playerProgress.ResourcesData.PolishedLunocits -= resource.Count;
+                    break;
+            }
+        }
+
+        if (!isOk)
+        {
+            print("Not enough resource");
+            return;
+        }
+        
         foreach (var item in _items)
         {
             if (item.ItemClass == _currentChosenItem)
@@ -100,6 +168,8 @@ public class MakeView : MonoBehaviour
         _choosePanelButton.gameObject.SetActive(false);
         _partsPanel.SetActive(true);
         print($"Current item class {_currentChosenItem}, material {needResources[0].Resource}");
+        
+        _messageBus.OnResourceCountChanged?.Invoke();
     }
 
     private void ItemChosen(ItemClass obj)
@@ -245,6 +315,10 @@ public class MakeView : MonoBehaviour
     {
         _jackpotPanel.SetActive(false);
         _acceptPanel.SetActive(true);
+        
+        _playerProgress.Inventory.Items.Add(new Item(_currentChosenItem, _needResources, itemQuality));
         _resultText.text = $"You made {item}\n" + $"Quality - {itemQuality}";
+        
+        _messageBus.OnInventoryUpdate?.Invoke();
     }
 }

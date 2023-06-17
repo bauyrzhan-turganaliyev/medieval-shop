@@ -13,6 +13,6 @@ public class ProcessService : MonoBehaviour
         _playerProgress = playerProgress;
         _productionService.Init(_playerProgress.ResourcesData, _playerProgress.ProductionSkillData);
         _polishService.Init(_playerProgress.ResourcesData, _playerProgress.PolishSkillData);
-        _makeService.Init();
+        _makeService.Init(_playerProgress);
     }
 }

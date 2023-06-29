@@ -172,6 +172,7 @@ public enum Resources
     Iron,
     Leather,
     Silver,
+    Gold,
     Ingredients,
     MagicCrystal,
     Titan,

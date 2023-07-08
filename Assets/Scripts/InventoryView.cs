@@ -24,6 +24,11 @@ public class InventoryView : MonoBehaviour
         
         _closeInventoryButton.onClick.AddListener((() => gameObject.SetActive(false)));
     }
+
+    public void Switch(bool flag)
+    {
+        gameObject.SetActive(flag);
+    }
     
     private void UpdateInventory()
     {

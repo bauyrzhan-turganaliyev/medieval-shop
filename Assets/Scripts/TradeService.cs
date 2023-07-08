@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 
 public class TradeService : MonoBehaviour
@@ -12,6 +13,11 @@ public class TradeService : MonoBehaviour
     public void Construct(MessageBus messageBus)
     {
         _messageBus = messageBus;
+    }
+
+    private void OnEnable()
+    {
+        ModeChanged(EMode.Trade);
     }
 
     public void Init()

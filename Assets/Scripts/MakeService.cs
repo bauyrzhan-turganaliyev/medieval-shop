@@ -21,7 +21,6 @@ public class MakeService : MonoBehaviour
         _messageBus.OnModeChanged += ModeChanged;
         _makeView.Init(playerProgress);
         _japckpotWheel.Init();
-        _makeView.AllPartsPlaced += AllPartsPlaced;
         _japckpotWheel.OnJackpotStopped += JackpotStopped;
         _makeView.OnCreatedForm += FormCreated;
     }
@@ -35,12 +34,7 @@ public class MakeService : MonoBehaviour
     {
         _makeView.ItemHasDone("Sword", obj);
     }
-
-    private void AllPartsPlaced()
-    {
-        _makeView.MakeMode();
-    }
-
+    
     private void ModeChanged(EMode obj)
     {
         if (obj == EMode.Make)

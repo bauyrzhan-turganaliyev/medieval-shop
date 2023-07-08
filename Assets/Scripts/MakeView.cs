@@ -19,8 +19,8 @@ public class MakeView : MonoBehaviour
     [SerializeField] private GameObject _makePanel;
     [SerializeField] private GameObject _jackpotPanel;
     [SerializeField] private GameObject _acceptPanel;
-    
-    [SerializeField] private List<MakeItem> _items;
+
+    [SerializeField] private MakeItem _makeItem;
     
     [SerializeField] private RectTransform _progressBar; 
     [SerializeField] private RectTransform _greenZone;
@@ -37,7 +37,6 @@ public class MakeView : MonoBehaviour
     [SerializeField] private float _greenZoneSpeed;
     [SerializeField] private float _cursorSpeed;
 
-    public Action AllPartsPlaced;
     public Action OnCreatedForm;
 
     private MessageBus _messageBus;
@@ -53,7 +52,6 @@ public class MakeView : MonoBehaviour
     private bool _inGreenZone;
 
     private ItemClass _currentChosenItem;
-    private MakeItem _currentMakeItem;
     private List<NeedResources> _needResources;
 
     [Inject]
@@ -73,17 +71,9 @@ public class MakeView : MonoBehaviour
         _progressBarWidth = _progressBar.rect.width;
         _greenZoneWidth = _greenZone.rect.width;
         _cursorWidth = _cursor.RectTransform.rect.width;
-
-        foreach (var item in _items)
-        {
-            item.Init();
-            item.OnAllPartsPlaced += () =>
-            {
-                item.ResetProgressBar();
-                AllPartsPlaced?.Invoke();
-            };    
-        }
-
+        
+        _makeItem.Reset();
+  
         _backChooseMaterialButton.onClick.AddListener((() =>
         {
             SwitchMaterialPanel(false);
@@ -154,20 +144,16 @@ public class MakeView : MonoBehaviour
             print("Not enough resource");
             return;
         }
-        
-        foreach (var item in _items)
-        {
-            if (item.ItemClass == _currentChosenItem)
-            {
-                _currentMakeItem = item;
-                break;
-            }
-        }
-        _currentMakeItem.Reset();
+
         SwitchMaterialPanel(false);
+        
         _choosePanelButton.gameObject.SetActive(false);
         _partsPanel.SetActive(true);
+        
         print($"Current item class {_currentChosenItem}, material {needResources[0].Resource}");
+
+        _makeItem.Reset();
+        MakeMode();
         
         _messageBus.OnResourceCountChanged?.Invoke();
     }
@@ -215,8 +201,8 @@ public class MakeView : MonoBehaviour
 
         if (_inGreenZone)
         {
-            _currentMakeItem.ProgressBar.fillAmount += 0.1f * Time.deltaTime;
-            if (_currentMakeItem.ProgressBar.fillAmount >= 1)
+            _makeItem.ProgressBar.fillAmount += 0.1f * Time.deltaTime;
+            if (_makeItem.ProgressBar.fillAmount >= 1)
             {
                 End();
                 _cursorRight = false;
@@ -297,7 +283,7 @@ public class MakeView : MonoBehaviour
         _jackpotPanel.SetActive(false);
         _acceptPanel.SetActive(false);
         _choosePanelButton.gameObject.SetActive(true);
-        _currentMakeItem?.Reset();
+        _makeItem.Reset();
     }
 
     public void Switch(bool b)

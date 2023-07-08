@@ -79,6 +79,6 @@ public class CustomerService : MonoBehaviour
 
     public Customer GetFirstCustomer()
     {
-        return _customers.Count > 0 ? _customers[0] : null;
+        return _customers != null && _customers.Count > 0 ? _customers[0] : null;
     }
 }
